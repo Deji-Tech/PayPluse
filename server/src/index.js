@@ -1,3 +1,7 @@
+process.on('unhandledRejection', (err) => {
+  console.error('[Unhandled Rejection]', err?.message || err)
+})
+
 import express from 'express'
 import cors from 'cors'
 import helmet from 'helmet'
@@ -41,7 +45,7 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'Internal server error' })
 })
 
-app.listen(config.port, () => {
+app.listen(config.port, '0.0.0.0', () => {
   console.log(`[PayPulse API] running on http://localhost:${config.port}`)
   startTelegramBot()
 })
