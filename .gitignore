@@ -25,3 +25,6 @@ dist-ssr
 .env
 server/node_modules/
 server/.env
+server/server_err.txt
+server/server_log.txt
+server/test-auth.*
