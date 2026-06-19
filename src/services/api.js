@@ -13,7 +13,7 @@ async function request(path, options = {}) {
   }
   if (authToken) headers['Authorization'] = `Bearer ${authToken}`
 
-  const res = await fetch(`${API_BASE}${path}`, {
+  const res = await fetch(`${API_BASE}/api${path}`, {
     ...options,
     headers,
   })
