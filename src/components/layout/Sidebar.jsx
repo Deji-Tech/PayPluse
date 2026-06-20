@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import {
   LayoutDashboard, MessageCircle, Wallet, ArrowLeftRight,
   BookOpen, Settings, ChevronDown, Link2, Send, FileText,
-  MoreHorizontal, LogOut
+  MoreHorizontal, LogOut, PanelLeftClose, PanelLeftOpen
 } from 'lucide-react'
 import { useAuth } from '../../contexts/AuthContext'
 
@@ -31,7 +31,7 @@ const projects = [
   { id: 'settings', label: 'More', icon: MoreHorizontal },
 ]
 
-export default function Sidebar({ activePage, onNavigate, collapsed }) {
+export default function Sidebar({ activePage, onNavigate, collapsed, onToggleCollapse }) {
   const [expandedChat, setExpandedChat] = useState(false)
   const { user, signOut } = useAuth()
   const navigate = useNavigate()
@@ -72,6 +72,14 @@ export default function Sidebar({ activePage, onNavigate, collapsed }) {
             <div className="text-[10px] text-muted font-mono truncate">Conversational Banking</div>
           </div>
         )}
+        <button
+          onClick={onToggleCollapse}
+          className={`flex-shrink-0 text-muted hover:text-text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 rounded ${collapsed ? '' : '-mr-1'}`}
+          aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          title={collapsed ? 'Expand' : 'Collapse'}
+        >
+          {collapsed ? <PanelLeftOpen size={18} /> : <PanelLeftClose size={18} />}
+        </button>
       </div>
 
       {!collapsed && (

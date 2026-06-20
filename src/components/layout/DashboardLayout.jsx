@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
-  LayoutDashboard, MessageCircle, Wallet, ArrowLeftRight, Settings, User, LogOut
+  LayoutDashboard, MessageCircle, Wallet, ArrowLeftRight, Settings, User, LogOut, PanelLeftClose, PanelLeftOpen
 } from 'lucide-react'
 import { useAuth } from '../../contexts/AuthContext'
 import { useToast } from '../ui/toast'
@@ -121,6 +121,10 @@ export default function DashboardLayout() {
     return () => window.removeEventListener('resize', check)
   }, [])
 
+  const toggleSidebar = useCallback(() => {
+    setSidebarCollapsed(prev => !prev)
+  }, [])
+
   const handleNavigate = (page) => {
     setActivePage(page)
   }
@@ -151,6 +155,7 @@ export default function DashboardLayout() {
           activePage={activePage}
           onNavigate={handleNavigate}
           collapsed={sidebarCollapsed}
+          onToggleCollapse={toggleSidebar}
         />
       </div>
 
