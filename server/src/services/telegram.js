@@ -18,16 +18,31 @@ export function startTelegramBot() {
 
   bot = new TelegramBot(config.telegramBotToken, { polling: false })
 
+  function startWithRetry(retries = 5) {
+    bot.deleteWebHook()
+      .then(() => bot.startPolling())
+      .then(() => console.log('[Telegram] Bot started (polling)'))
+      .catch((err) => {
+        if (err.code === 'ETELEGRAM' && err.message.includes('409') && retries > 0) {
+          console.log(`[Telegram] 409 conflict (${retries} retries left), waiting 5s...`)
+          setTimeout(() => startWithRetry(retries - 1), 5000)
+        } else {
+          console.error('[Telegram] Failed to start bot:', err.message)
+        }
+      })
+  }
+
   bot.on('polling_error', (err) => {
     if (err.code === 'ETELEGRAM' && err.message.includes('409')) {
-      console.log('[Telegram] Another bot instance is running — continuing without bot')
+      console.log('[Telegram] Polling conflict detected — retrying in 10s...')
+      bot.stopPolling()
+      setTimeout(() => startWithRetry(), 10000)
     } else {
       console.error('[Telegram] Polling error:', err.message)
     }
   })
 
-  bot.startPolling()
-  console.log('[Telegram] Bot started (polling)')
+  startWithRetry()
 
   bot.onText(/\/start/, async (msg) => {
     const chatId = msg.chat.id
