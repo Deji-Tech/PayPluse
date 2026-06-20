@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Copy, Check, MessageCircle, X, ExternalLink } from 'lucide-react'
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../components/ui/card'
 import { Button } from '../components/ui/button'
+import { Skeleton } from '../components/ui/skeleton'
 import { useToast } from '../components/ui/toast'
 import { api } from '../services/api'
 
@@ -85,7 +86,17 @@ export default function DashboardSettings() {
           </CardHeader>
           <CardContent>
             {loading ? (
-              <div className="animate-pulse h-10 bg-surface-secondary rounded" />
+              <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <Skeleton className="w-9 h-9 rounded-full" />
+                  <div className="flex-1">
+                    <Skeleton className="h-4 w-36 mb-1" />
+                    <Skeleton className="h-3 w-52" />
+                  </div>
+                </div>
+                <Skeleton className="h-24 w-full rounded-xl" />
+                <Skeleton className="h-10 w-44 rounded-full" />
+              </div>
             ) : !telegramLinked ? (
               <div className="space-y-4">
                 <div className="bg-surface-secondary rounded-xl p-4 border border-border">

@@ -3,6 +3,7 @@ import { RefreshCw, ArrowLeftRight, Loader } from 'lucide-react'
 import { Card } from '../components/ui/card'
 import { Badge } from '../components/ui/badge'
 import { Button } from '../components/ui/button'
+import { Skeleton } from '../components/ui/skeleton'
 import { api } from '../services/api'
 
 const statusConfig = {
@@ -58,8 +59,25 @@ export default function DashboardTransactions() {
 
       <Card className="overflow-hidden">
         {loading ? (
-          <div className="animate-pulse p-6 space-y-4">
-            {[1, 2, 3, 4, 5].map(i => <div key={i} className="h-8 bg-surface-secondary rounded" />)}
+          <div className="overflow-x-auto">
+            <div className="border-b border-border bg-surface-elevated px-5 py-3.5 flex gap-6">
+              <Skeleton className="h-3 w-24" />
+              <Skeleton className="h-3 w-20" />
+              <Skeleton className="h-3 w-28" />
+              <Skeleton className="h-3 w-16" />
+              <Skeleton className="h-3 w-20" />
+            </div>
+            <div className="divide-y divide-border/50">
+              {[1, 2, 3, 4, 5].map(i => (
+                <div key={i} className="flex items-center px-5 py-4 gap-6">
+                  <Skeleton className="h-3 w-24" />
+                  <Skeleton className="h-3 w-20" />
+                  <Skeleton className="h-3 w-28" />
+                  <Skeleton className="h-5 w-16 rounded-full" />
+                  <Skeleton className="h-3 w-20" />
+                </div>
+              ))}
+            </div>
           </div>
         ) : txs.length > 0 ? (
           <div className="overflow-x-auto">

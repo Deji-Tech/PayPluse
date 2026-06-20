@@ -4,6 +4,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../co
 import { Badge } from '../components/ui/badge'
 import { Input } from '../components/ui/input'
 import { Button } from '../components/ui/button'
+import { Skeleton } from '../components/ui/skeleton'
 import { useToast } from '../components/ui/toast'
 import { api } from '../services/api'
 
@@ -83,8 +84,13 @@ export default function DashboardWallet() {
           </CardHeader>
           <CardContent>
             {loading ? (
-              <div className="animate-pulse space-y-3">
-                {[1, 2, 3].map(i => <div key={i} className="h-10 bg-surface-secondary rounded" />)}
+              <div className="space-y-3">
+                {[1, 2, 3].map(i => (
+                  <div key={i} className="flex justify-between items-center py-2.5 border-b border-border last:border-0">
+                    <Skeleton className="h-3 w-24" />
+                    <Skeleton className="h-5 w-32 rounded" />
+                  </div>
+                ))}
               </div>
             ) : (
               <div className="space-y-3">

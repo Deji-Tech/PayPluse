@@ -5,6 +5,7 @@ import {
 } from 'lucide-react'
 import { useAuth } from '../../contexts/AuthContext'
 import { useToast } from '../ui/toast'
+import { Skeleton } from '../ui/skeleton'
 import { api } from '../../services/api'
 import Sidebar from './Sidebar'
 import Breadcrumb from './Breadcrumb'
@@ -59,7 +60,55 @@ export default function DashboardLayout() {
     if (!loading && !user) navigate('/login', { replace: true })
   }, [user, loading, navigate])
 
-  if (loading) return null
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-surface-secondary flex">
+        <div className="hidden md:flex w-[280px] border-r border-border bg-surface p-4 space-y-3">
+          <div className="flex items-center gap-3 h-16 border-b border-border mb-4">
+            <Skeleton className="w-8 h-8" />
+            <div className="flex-1">
+              <Skeleton className="h-4 w-24 mb-1" />
+              <Skeleton className="h-3 w-32" />
+            </div>
+          </div>
+          {[1, 2, 3, 4, 5].map(i => (
+            <div key={i} className="flex items-center gap-3 px-3 py-2.5">
+              <Skeleton className="w-5 h-5" />
+              <Skeleton className="h-3 w-28" />
+            </div>
+          ))}
+        </div>
+        <div className="flex-1 p-6 sm:p-8 space-y-6">
+          <Skeleton className="h-4 w-48" />
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
+            {[1, 2, 3].map(i => (
+              <div key={i} className="bg-surface-card border border-border rounded-[20px] p-5 sm:p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <Skeleton className="h-3 w-24" />
+                  <Skeleton className="h-9 w-9 rounded-xl" />
+                </div>
+                <Skeleton className="h-8 w-32 mb-2" />
+                <Skeleton className="h-3 w-20" />
+              </div>
+            ))}
+          </div>
+          <Skeleton className="h-4 w-28" />
+          {[1, 2, 3, 4, 5].map(i => (
+            <div key={i} className="flex items-center gap-3">
+              <Skeleton className="w-8 h-8 rounded-lg" />
+              <div className="flex-1 flex items-center justify-between">
+                <div>
+                  <Skeleton className="h-4 w-28 mb-1" />
+                  <Skeleton className="h-3 w-20" />
+                </div>
+                <Skeleton className="h-4 w-20" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    )
+  }
   if (!user) return null
 
   useEffect(() => {
