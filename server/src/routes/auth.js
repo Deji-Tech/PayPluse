@@ -11,38 +11,6 @@ const anonClient = createClient(config.supabaseUrl, config.supabaseAnonKey, {
   realtime: { transport: ws },
 })
 
-router.get('/debug', (req, res) => {
-  res.json({
-    hasUrl: !!config.supabaseUrl,
-    urlPrefix: config.supabaseUrl ? config.supabaseUrl.slice(0, 20) + '...' : null,
-    hasAnonKey: !!config.supabaseAnonKey,
-    anonKeyPrefix: config.supabaseAnonKey ? config.supabaseAnonKey.slice(0, 10) + '...' : null,
-    hasServiceKey: !!config.supabaseServiceKey,
-  })
-})
-
-router.get('/debug-signup', async (req, res) => {
-  try {
-    const result = await anonClient.auth.signUp({ email: 'debug-' + Date.now() + '@example.com', password: 'Test12345!' })
-    res.json({
-      success: true,
-      result: result.error
-        ? { errorMessage: result.error.message, errorName: result.error.name, errorStatus: result.error.status, errorCode: result.error.code, stack: result.error.stack?.split('\n').slice(0, 5).join('\n') }
-        : { user: result.data.user?.id, session: !!result.data.session }
-    })
-  } catch (err) {
-    res.json({ success: false, error: err.message, name: err.name, stack: err.stack?.split('\n').slice(0, 8).join('\n') })
-  }
-})
-
-router.get('/debug-url', (req, res) => {
-  // Recreate what the Supabase client does
-  const url = config.supabaseUrl
-  const authUrl = `${url}/auth/v1`
-  const fullUrl = `${authUrl}/signup`
-  res.json({ supabaseUrl: config.supabaseUrl, authUrl, fullUrl })
-})
-
 router.post('/register', async (req, res) => {
   try {
     const { email, password, name } = req.body
