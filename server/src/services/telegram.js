@@ -33,9 +33,82 @@ export function startTelegramBot() {
     const chatId = msg.chat.id
     const username = msg.from?.username || msg.from?.first_name || 'User'
 
+    const { data: link } = await supabase
+      .from('telegram_links')
+      .select('user_id')
+      .eq('telegram_chat_id', String(chatId))
+      .maybeSingle()
+
+    if (link) {
+      await bot.sendMessage(
+        chatId,
+        `*Welcome back, ${username}!* \u{1F4B3}\n\nTry:\n\`check balance\`\n\`transfer 2000 to 7044879145\`\n\`history\``,
+        { parse_mode: 'Markdown' }
+      )
+      return
+    }
+
     await bot.sendMessage(
       chatId,
-      `*Welcome to PayPulse!* \u{1F4B3}\n\nI'm your conversational banking assistant.\n\nTo use me, first link your account from the PayPulse dashboard.\n\nTry saying:\n\`transfer 2000 to 7044879145\`\n\`send 5000 to Ola\`\n\`check balance\``,
+      `*Welcome to PayPulse!* \u{1F4B3}\n\nI'm your conversational banking assistant.\n\nTo link your account, send:\n\n\`/link youremail@example.com\`\n\nThen try:\n\`check balance\`\n\`transfer 2000 to 7044879145\``,
+      { parse_mode: 'Markdown' }
+    )
+  })
+
+  bot.onText(/\/link(?:\s+(\S+))?/, async (msg, match) => {
+    const chatId = msg.chat.id
+
+    const { data: link } = await supabase
+      .from('telegram_links')
+      .select('user_id')
+      .eq('telegram_chat_id', String(chatId))
+      .maybeSingle()
+
+    if (link) {
+      await bot.sendMessage(chatId, 'Your Telegram is already linked to your PayPulse account.')
+      return
+    }
+
+    const code = match[1]
+    if (!code) {
+      await bot.sendMessage(
+        chatId,
+        'To link your account, send:\n\n`/link YOUR_EMAIL`\n\nUse the email you registered with on PayPulse.',
+        { parse_mode: 'Markdown' }
+      )
+      return
+    }
+
+    const email = code.toLowerCase().trim()
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('id')
+      .eq('email', email)
+      .maybeSingle()
+
+    if (!profile) {
+      await bot.sendMessage(
+        chatId,
+        `No account found with email \`${email}\`.\n\nMake sure you use the same email you registered with on PayPulse dashboard.`,
+        { parse_mode: 'Markdown' }
+      )
+      return
+    }
+
+    const { error: insertError } = await supabase.from('telegram_links').insert({
+      user_id: profile.id,
+      telegram_chat_id: String(chatId),
+      telegram_username: msg.from?.username || null,
+    })
+
+    if (insertError) {
+      await bot.sendMessage(chatId, 'Failed to link account. Please try again from the Settings page.')
+      return
+    }
+
+    await bot.sendMessage(
+      chatId,
+      `\u2705 *Account linked successfully!*\n\nYou can now use PayPulse via Telegram.\n\nTry:\n\`check balance\`\n\`transfer 2000 to 7044879145\`\n\`history\``,
       { parse_mode: 'Markdown' }
     )
   })
@@ -54,7 +127,8 @@ export function startTelegramBot() {
     if (!link) {
       await bot.sendMessage(
         chatId,
-        'Please link your Telegram account from the PayPulse dashboard first. Go to Settings \u2192 Telegram in your dashboard.'
+        'To link your account, send:\n\n`/link youremail@example.com`\n\nReplace with the email you used to register on PayPulse.',
+        { parse_mode: 'Markdown' }
       )
       return
     }
