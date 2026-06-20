@@ -52,8 +52,15 @@ const breadcrumbMap = {
 export default function DashboardLayout() {
   const [activePage, setActivePage] = useState('home')
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
-  const { user, signOut } = useAuth()
+  const { user, loading, signOut } = useAuth()
   const navigate = useNavigate()
+
+  useEffect(() => {
+    if (!loading && !user) navigate('/login', { replace: true })
+  }, [user, loading, navigate])
+
+  if (loading) return null
+  if (!user) return null
 
   useEffect(() => {
     const check = () => {
