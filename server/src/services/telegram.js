@@ -95,16 +95,31 @@ export function startTelegramBot() {
     }
 
     const email = code.toLowerCase().trim()
-    const { data: profile } = await supabase
+
+    let { data: profile } = await supabase
       .from('profiles')
-      .select('id')
-      .eq('email', email)
+      .select('id, email')
+      .ilike('email', email)
       .maybeSingle()
+
+    if (!profile) {
+      const { data: { users } } = await supabase.auth.admin.listUsers()
+      const authUser = users?.find(u => u.email?.toLowerCase() === email)
+      if (authUser) {
+        const { error: insertError } = await supabase.from('profiles').insert({
+          id: authUser.id,
+          email: authUser.email,
+          name: authUser.email?.split('@')[0] || 'User',
+        }).select().single()
+
+        if (!insertError) profile = { id: authUser.id, email: authUser.email }
+      }
+    }
 
     if (!profile) {
       await bot.sendMessage(
         chatId,
-        `No account found with email \`${email}\`.\n\nMake sure you use the same email you registered with on PayPulse dashboard.`,
+        `No account found with email \`${email}\`.\n\nMake sure you use the same email you registered with on PayPulse dashboard. If you haven't registered yet, go to the PayPulse website and create an account first.`,
         { parse_mode: 'Markdown' }
       )
       return
