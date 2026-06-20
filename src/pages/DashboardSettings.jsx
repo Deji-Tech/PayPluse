@@ -5,7 +5,7 @@ import { Button } from '../components/ui/button'
 import { useToast } from '../components/ui/toast'
 import { api } from '../services/api'
 
-const BOT_USERNAME = 'PayPulseBot'
+const BOT_USERNAME = 'Payplusepp_bot'
 
 export default function DashboardSettings() {
   const [telegramLinked, setTelegramLinked] = useState(false)
