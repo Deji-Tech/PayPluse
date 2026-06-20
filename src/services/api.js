@@ -1,4 +1,6 @@
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3001'
+let raw = import.meta.env.VITE_API_URL || 'http://localhost:3001'
+if (raw && !raw.startsWith('http://') && !raw.startsWith('https://')) raw = 'https://' + raw
+const API_BASE = raw
 
 let authToken = null
 
