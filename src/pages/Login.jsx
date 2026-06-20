@@ -23,6 +23,7 @@ export default function Login() {
       if (mode === 'login') {
         await signIn(email, password)
         toast('Signed in successfully')
+        navigate('/dashboard')
       } else {
         await signUp(email, password, name)
         toast('Account created! Check your email to confirm.')
