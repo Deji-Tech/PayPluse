@@ -19,9 +19,7 @@ export default function Navbar() {
     <nav className="fixed top-0 left-0 right-0 z-50 bg-surface/80 backdrop-blur-xl border-b border-border">
       <div className="max-w-7xl mx-auto px-5 sm:px-8 flex items-center justify-between h-20">
         <Link to="/" className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-accent flex items-center justify-center overflow-hidden">
-            <img src="/favicon.png" alt="PayPulse" className="w-5 h-5 object-contain" />
-          </div>
+          <img src="/favicon.png" alt="PayPulse" className="w-8 h-8" />
           <span className="text-lg font-bold text-accent tracking-tight">PayPulse</span>
         </Link>
 

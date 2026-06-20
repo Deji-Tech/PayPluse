@@ -41,9 +41,7 @@ export default function Login() {
       <div className="w-full max-w-md">
         <div className="bg-surface-card border border-border rounded-2xl p-6 sm:p-10 shadow-lg shadow-black/5">
           <div className="flex items-center justify-center gap-2.5 mb-8">
-            <div className="w-9 h-9 rounded-lg bg-accent flex items-center justify-center overflow-hidden">
-              <img src="/favicon.png" alt="PayPulse" className="w-6 h-6 object-contain" />
-            </div>
+            <img src="/favicon.png" alt="PayPulse" className="w-9 h-9" />
             <span className="text-xl font-bold text-accent tracking-tight">PayPulse</span>
           </div>
 
