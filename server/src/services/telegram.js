@@ -205,7 +205,45 @@ export function startTelegramBot() {
       return
     }
 
+    if (intent.action === 'wallets') {
+      const { data: wallets } = await supabase
+        .from('wallets')
+        .select('provider, account_number, linked_at')
+        .eq('user_id', link.user_id)
+        .order('linked_at', { ascending: false })
+
+      if (!wallets?.length) {
+        await bot.sendMessage(
+          chatId,
+          'You have no linked wallets yet. To link one, send:\n\n`link 7044879145`\n\nOr go to Settings in your dashboard.'
+        )
+        return
+      }
+
+      const lines = wallets.map((w, i) =>
+        `${i + 1}. ${w.provider.toUpperCase()} - ${w.account_number} (linked ${new Date(w.linked_at).toLocaleDateString()})`
+      )
+      await bot.sendMessage(
+        chatId,
+        `*Your Linked Wallets:*\n\n${lines.join('\n')}`,
+        { parse_mode: 'Markdown' }
+      )
+      return
+    }
+
     if (intent.action === 'link_wallet') {
+      const { data: existing } = await supabase
+        .from('wallets')
+        .select('id')
+        .eq('user_id', link.user_id)
+        .eq('account_number', intent.accountNumber)
+        .maybeSingle()
+
+      if (existing) {
+        await bot.sendMessage(chatId, `Wallet ${intent.accountNumber} is already linked.`)
+        return
+      }
+
       const { error } = await supabase.from('wallets').insert({
         user_id: link.user_id,
         provider: 'opay',

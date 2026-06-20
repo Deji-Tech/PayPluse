@@ -51,6 +51,10 @@ export function parseMessage(text) {
     return { action: 'history', confidence: 0.8, raw: trimmed }
   }
 
+  if (/(?:my\s+)?(?:wallet|wallets|connected|linked\s+accounts)/i.test(trimmed)) {
+    return { action: 'wallets', confidence: 0.8, raw: trimmed }
+  }
+
   if (/(?:link|connect)\s+(?:opay\s+)?(\d{5,15})/i.test(trimmed)) {
     const account = trimmed.match(/(\d{5,15})/)[1]
     return { action: 'link_wallet', accountNumber: account, confidence: 0.85, raw: trimmed }
