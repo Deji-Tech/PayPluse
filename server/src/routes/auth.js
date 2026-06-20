@@ -21,6 +21,15 @@ router.get('/debug', (req, res) => {
   })
 })
 
+router.get('/debug-signup', async (req, res) => {
+  try {
+    const result = await anonClient.auth.signUp({ email: 'debug-' + Date.now() + '@example.com', password: 'Test12345!' })
+    res.json({ success: true, result: result.error ? { error: result.error.message } : { user: result.data.user?.id } })
+  } catch (err) {
+    res.json({ success: false, error: err.message, stack: err.stack?.split('\n').slice(0, 5).join('\n') })
+  }
+})
+
 router.post('/register', async (req, res) => {
   try {
     const { email, password, name } = req.body

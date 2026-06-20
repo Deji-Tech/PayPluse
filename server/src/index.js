@@ -41,6 +41,8 @@ app.get('/debug/env', (req, res) => {
     telegramBotToken: !!config.telegramBotToken,
     telegramEnabled: config.telegramEnabled,
     port: config.port,
+    nodeVersion: process.version,
+    nodeVersions: process.versions,
   })
 })
 
