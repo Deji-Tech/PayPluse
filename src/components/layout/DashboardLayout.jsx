@@ -60,6 +60,17 @@ export default function DashboardLayout() {
     if (!loading && !user) navigate('/login', { replace: true })
   }, [user, loading, navigate])
 
+  // Auto-collapse sidebar on medium screens (768–1024px)
+  useEffect(() => {
+    const check = () => {
+      const w = window.innerWidth
+      setSidebarCollapsed(w >= 768 && w < 1024)
+    }
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
+
   if (loading) {
     return (
       <div className="min-h-screen bg-surface-secondary flex">
@@ -111,16 +122,6 @@ export default function DashboardLayout() {
   }
   if (!user) return null
 
-  useEffect(() => {
-    const check = () => {
-      const w = window.innerWidth
-      setSidebarCollapsed(w >= 768 && w < 1024)
-    }
-    check()
-    window.addEventListener('resize', check)
-    return () => window.removeEventListener('resize', check)
-  }, [])
-
   const toggleSidebar = useCallback(() => {
     setSidebarCollapsed(prev => !prev)
   }, [])
@@ -170,36 +171,41 @@ export default function DashboardLayout() {
         )}
       </div>
 
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-surface border-t border-border flex" aria-label="Dashboard navigation">
+      {/* Spacer so content isn't hidden behind fixed bottom nav */}
+      <div className="md:hidden h-[68px] flex-shrink-0" aria-hidden="true" />
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-surface border-t border-border flex items-stretch pb-[max(0.25rem,env(safe-area-inset-bottom))]" aria-label="Dashboard navigation">
         {navItems.map(item => {
           const Icon = item.icon
+          const isActive = activePage === item.id
           return (
             <button
               key={item.id}
               onClick={() => setActivePage(item.id)}
-              className={`flex-1 flex flex-col items-center gap-0.5 py-2 text-[10px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 ${
-                activePage === item.id ? 'text-accent' : 'text-muted'
+              className={`flex-1 flex flex-col items-center justify-center gap-0.5 min-h-[56px] py-1 text-[10px] font-medium transition-colors relative focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 focus-visible:ring-inset ${
+                isActive ? 'text-accent' : 'text-muted hover:text-text-primary'
               }`}
-              aria-current={activePage === item.id ? 'page' : undefined}
+              aria-current={isActive ? 'page' : undefined}
             >
+              {isActive && <span className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-[2.5px] rounded-b-full bg-accent" />}
               <Icon size={20} aria-hidden="true" />
-              {item.label}
+              <span>{item.label}</span>
             </button>
           )
         })}
         <button
           onClick={() => setActivePage('profile')}
-          className={`flex-1 flex flex-col items-center gap-0.5 py-2 text-[10px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 ${
-            activePage === 'profile' ? 'text-accent' : 'text-muted'
+          className={`flex-1 flex flex-col items-center justify-center gap-0.5 min-h-[56px] py-1 text-[10px] font-medium transition-colors relative focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 focus-visible:ring-inset ${
+            activePage === 'profile' ? 'text-accent' : 'text-muted hover:text-text-primary'
           }`}
           aria-current={activePage === 'profile' ? 'page' : undefined}
         >
+          {activePage === 'profile' && <span className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-[2.5px] rounded-b-full bg-accent" />}
           <User size={20} aria-hidden="true" />
           Profile
         </button>
         <button
           onClick={handleSignOut}
-          className="flex-1 flex flex-col items-center gap-0.5 py-2 text-[10px] font-medium text-muted transition-colors"
+          className="flex-1 flex flex-col items-center justify-center gap-0.5 min-h-[56px] py-1 text-[10px] font-medium text-muted hover:text-error transition-colors"
         >
           <LogOut size={20} aria-hidden="true" />
           Sign Out
@@ -253,7 +259,7 @@ function DashboardProfile() {
               type="text"
               value={name}
               onChange={e => setName(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-lg border border-border bg-surface text-text-primary text-sm focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all"
+              className="w-full px-4 py-2.5 rounded-lg border border-border bg-surface text-text-primary text-sm sm:text-base focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all"
             />
           </div>
           <div className="space-y-1.5">
@@ -263,7 +269,7 @@ function DashboardProfile() {
               type="email"
               value={userEmail}
               disabled
-              className="w-full px-4 py-2.5 rounded-lg border border-border bg-surface text-text-primary text-sm opacity-60 cursor-not-allowed"
+              className="w-full px-4 py-2.5 rounded-lg border border-border bg-surface text-text-primary text-sm sm:text-base opacity-60 cursor-not-allowed"
             />
           </div>
           <button type="submit" disabled={saving} className="px-6 py-2.5 rounded-full bg-accent text-white font-semibold text-sm hover:bg-accent-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 transition-all disabled:opacity-50">

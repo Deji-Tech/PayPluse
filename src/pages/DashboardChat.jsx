@@ -14,12 +14,12 @@ const INITIAL_BOT_MSG = {
     <div>
       <p className="text-text-primary">Welcome to <strong>PayPulse</strong>! Your conversational banking assistant.</p>
       <p className="text-muted text-xs mt-2 font-mono">Try saying something like:</p>
-      <div className="mt-2 flex flex-wrap gap-2">
+      <div className="mt-2 flex gap-2 overflow-x-auto -mx-1 px-1 pb-1 scrollbar-none">
         {['transfer 2000 to 7044879145 via opay', 'send 5000 to 2215381184', 'pay 15000 to favor'].map((s, i) => (
           <button
             key={i}
             onClick={() => window.dispatchEvent(new CustomEvent('fill-message', { detail: s }))}
-            className="px-3 py-1.5 rounded-lg bg-surface-secondary border border-border text-xs font-mono text-accent hover:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 transition-colors"
+            className="shrink-0 px-3 py-1.5 rounded-lg bg-surface-secondary border border-border text-xs font-mono text-accent hover:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 transition-colors whitespace-nowrap"
           >
             {s}
           </button>
@@ -269,7 +269,7 @@ export default function DashboardChat() {
             onChange={e => setInput(e.target.value)}
             onKeyDown={e => e.key === 'Enter' && handleSend()}
             placeholder='Type a message... e.g. "transfer 2000 to 7044879145 via opay"'
-            className="flex-1 px-5 py-3 rounded-full border border-border bg-surface-secondary text-text-primary text-sm placeholder:text-muted/50 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all"
+            className="flex-1 px-5 py-3 rounded-full border border-border bg-surface-secondary text-text-primary text-sm sm:text-base placeholder:text-muted/50 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all"
             aria-label="Chat input"
           />
           <button
@@ -284,8 +284,8 @@ export default function DashboardChat() {
       </div>
 
       {showWebview && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in" role="dialog" aria-modal="true" aria-label="Secure payment confirmation">
-          <div className="w-full max-w-sm bg-surface-card border border-border rounded-2xl overflow-hidden shadow-2xl animate-fade-in-up">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center animate-fade-in" role="dialog" aria-modal="true" aria-label="Secure payment confirmation">
+          <div className="w-full sm:max-w-sm bg-surface-card border border-border sm:rounded-2xl rounded-t-2xl overflow-hidden shadow-2xl animate-fade-in-up sm:mx-4">
             <div className="flex items-center justify-between px-5 py-4 border-b border-border bg-surface-elevated">
               <div className="flex items-center gap-2.5 text-sm">
                 <span className="w-5 h-5 rounded-full bg-success/15 flex items-center justify-center" aria-hidden="true">
@@ -316,7 +316,7 @@ export default function DashboardChat() {
                     placeholder="+234..."
                     value={phone}
                     onChange={e => setPhone(e.target.value)}
-                    className="w-full px-4 py-3 rounded-lg border border-border bg-surface text-text-primary text-sm focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all"
+                    className="w-full px-4 py-3 rounded-lg border border-border bg-surface text-text-primary text-sm sm:text-base focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all"
                   />
                 </div>
                 <div className="space-y-1.5">
@@ -360,8 +360,8 @@ export default function DashboardChat() {
       )}
 
       {showSuccess && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in" role="dialog" aria-modal="true" aria-label="Transfer successful">
-          <div className="w-full max-w-sm bg-surface-card border border-border rounded-2xl p-8 text-center shadow-2xl animate-fade-in-up">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center animate-fade-in" role="dialog" aria-modal="true" aria-label="Transfer successful">
+          <div className="w-full sm:max-w-sm bg-surface-card border border-border sm:rounded-2xl rounded-t-2xl p-6 sm:p-8 text-center shadow-2xl animate-fade-in-up sm:mx-4">
             <div className="w-16 h-16 rounded-full bg-success/10 border-2 border-success flex items-center justify-center mx-auto mb-4 relative" aria-hidden="true">
               <Check size={28} className="text-success" style={{ animation: 'check-in 0.5s ease 0.2s both' }} />
               <span className="absolute inset-0 rounded-full border-2 border-success animate-ping opacity-20" />

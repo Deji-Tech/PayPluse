@@ -55,7 +55,7 @@ export default function Login() {
                   placeholder="John Doe"
                   value={name}
                   onChange={e => setName(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg border border-border bg-surface text-text-primary text-sm placeholder:text-muted/50 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all"
+                  className="w-full px-4 py-3 rounded-lg border border-border bg-surface text-text-primary text-sm sm:text-base placeholder:text-muted/50 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all"
                   required
                 />
               </div>
@@ -71,7 +71,7 @@ export default function Login() {
                   placeholder="you@example.com"
                   value={email}
                   onChange={e => setEmail(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2 rounded-lg border border-border bg-surface text-text-primary text-sm placeholder:text-muted/50 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all"
+                  className="w-full pl-10 pr-4 py-3 rounded-lg border border-border bg-surface text-text-primary text-sm sm:text-base placeholder:text-muted/50 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all"
                   required
                 />
               </div>
@@ -87,7 +87,7 @@ export default function Login() {
                   placeholder="••••••••"
                   value={password}
                   onChange={e => setPassword(e.target.value)}
-                  className="w-full pl-9 pr-9 py-2 rounded-lg border border-border bg-surface text-text-primary text-sm placeholder:text-muted/50 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all"
+                  className="w-full pl-10 pr-10 py-3 rounded-lg border border-border bg-surface text-text-primary text-sm sm:text-base placeholder:text-muted/50 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all"
                   required
                   minLength={6}
                 />

@@ -249,36 +249,13 @@ export function startTelegramBot() {
         provider: 'opay',
         account_number: intent.accountNumber,
       })
+
       if (error) {
-        await bot.sendMessage(chatId, 'Failed to link wallet. Please try from the dashboard.')
-      } else {
-        await bot.sendMessage(chatId, `Wallet ${intent.accountNumber} linked successfully!`)
+        await bot.sendMessage(chatId, 'Failed to link wallet.')
+        return
       }
-      return
+
+      await bot.sendMessage(chatId, `Wallet ${intent.accountNumber} linked successfully!`)
     }
-
-    const ref = `PP-${Math.random().toString(36).slice(2, 6).toUpperCase()}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`
-    const account = intent.recipientAccount || '7044879145'
-
-    const { error: txError } = await supabase.from('transactions').insert({
-      user_id: link.user_id,
-      reference: ref,
-      amount: intent.amount,
-      type: 'debit',
-      recipient: intent.recipientName || account,
-      recipient_account: account,
-      status: 'SUCCESSFUL',
-    })
-
-    if (txError) {
-      await bot.sendMessage(chatId, 'Sorry, something went wrong processing your payment.')
-      return
-    }
-
-    await bot.sendMessage(
-      chatId,
-      `\u2705 *Transfer Successful!*\n\nAmount: \u20A6${intent.amount.toLocaleString()}\nRecipient: ${intent.recipientName || account}\nRef: \`${ref}\``,
-      { parse_mode: 'Markdown' }
-    )
   })
 }

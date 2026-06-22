@@ -56,6 +56,7 @@ export default function DashboardWallet() {
                     placeholder="7044879145"
                     value={account}
                     onChange={e => setAccount(e.target.value)}
+                    className="text-sm sm:text-base"
                     required
                   />
                 </div>
