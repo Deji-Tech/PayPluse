@@ -119,7 +119,7 @@ export default function ChatDemo() {
   const isTyping = step >= 0 && step < MESSAGES.length && MESSAGES[step]?.type === 'typing'
 
   return (
-    <div className="w-full max-w-sm sm:max-w-lg mx-auto">
+    <div className="w-full max-w-[calc(100vw-2.5rem)] sm:max-w-lg mx-auto">
       <div className="bg-surface-card border border-border rounded-2xl shadow-xl shadow-black/5 overflow-hidden">
         <div className="flex items-center gap-2.5 px-4 py-3 border-b border-border bg-surface-elevated">
           <div className="w-7 h-7 rounded-full bg-accent/10 flex items-center justify-center">
