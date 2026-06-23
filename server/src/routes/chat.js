@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import { parseMessage } from '../services/nlp.js'
-import { opayClient } from '../services/opay.js'
+import { paystack } from '../services/paystack.js'
 import { supabase } from '../lib/supabase.js'
 
 const router = Router()
@@ -47,7 +47,7 @@ router.post('/parse', async (req, res) => {
 
   const ref = `PP-${Math.random().toString(36).slice(2, 6).toUpperCase()}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`
 
-  const { data: accountInfo } = await opayClient.resolveAccount(account)
+  const { data: accountInfo } = await paystack.resolveAccount(account)
 
   const { error: txError, data: tx } = await supabase.from('transactions').insert({
     user_id: req.user.id,
@@ -57,7 +57,7 @@ router.post('/parse', async (req, res) => {
     recipient: intent.recipientName || accountInfo?.accountName || account,
     recipient_account: account,
     status: 'PENDING',
-    provider: intent.bank?.toLowerCase() || sourceWallet?.provider || 'opay',
+    provider: intent.bank?.toLowerCase() || sourceWallet?.provider || 'paystack',
   }).select().single()
 
   if (txError) {
@@ -72,7 +72,7 @@ router.post('/parse', async (req, res) => {
       amount: intent.amount,
       recipient: intent.recipientName || accountInfo?.accountName || account,
       account,
-      bank: intent.bank || 'OPay',
+      bank: intent.bank || 'Paystack',
     },
   })
 })
@@ -92,6 +92,25 @@ router.post('/confirm', async (req, res) => {
 
   if (!tx) return res.status(404).json({ error: 'Transaction not found' })
   if (tx.status !== 'PENDING') return res.status(400).json({ error: 'Transaction already processed' })
+
+  const recipientResult = await paystack.createRecipient(tx.recipient, tx.recipient_account)
+  if (!recipientResult.success) {
+    return res.status(500).json({ error: 'Failed to create payment recipient' })
+  }
+
+  const transferResult = await paystack.initiateTransfer(tx.amount, recipientResult.recipientCode, reference)
+  if (!transferResult.success) {
+    await supabase.from('transactions').update({ status: 'FAILED', updated_at: new Date().toISOString() }).eq('id', tx.id)
+    return res.status(500).json({ error: transferResult.message || 'Transfer failed' })
+  }
+
+  if (transferResult.otpRequired) {
+    const finalizeResult = await paystack.finalizeTransfer(transferResult.transferCode, otp)
+    if (!finalizeResult.success) {
+      await supabase.from('transactions').update({ status: 'FAILED', updated_at: new Date().toISOString() }).eq('id', tx.id)
+      return res.status(500).json({ error: finalizeResult.message || 'OTP verification failed' })
+    }
+  }
 
   const { error } = await supabase
     .from('transactions')

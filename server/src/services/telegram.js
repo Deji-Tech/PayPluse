@@ -2,6 +2,7 @@ import TelegramBot from 'node-telegram-bot-api'
 import { config } from '../config.js'
 import { supabase } from '../lib/supabase.js'
 import { parseMessage } from './nlp.js'
+import { paystack } from './paystack.js'
 
 let bot = null
 
@@ -246,7 +247,7 @@ export function startTelegramBot() {
 
       const { error } = await supabase.from('wallets').insert({
         user_id: link.user_id,
-        provider: 'opay',
+        provider: 'paystack',
         account_number: intent.accountNumber,
       })
 
@@ -257,5 +258,53 @@ export function startTelegramBot() {
 
       await bot.sendMessage(chatId, `Wallet ${intent.accountNumber} linked successfully!`)
     }
+    const ref = `PP-${Math.random().toString(36).slice(2, 6).toUpperCase()}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`
+    const account = intent.recipientAccount || '7044879145'
+    const recipientName = intent.recipientName || account
+
+    const recipientResult = await paystack.createRecipient(recipientName, account)
+    if (!recipientResult.success) {
+      await bot.sendMessage(chatId, 'Sorry, failed to set up the recipient for this transfer.')
+      return
+    }
+
+    const transferResult = await paystack.initiateTransfer(intent.amount, recipientResult.recipientCode, ref)
+    if (!transferResult.success) {
+      await bot.sendMessage(chatId, `Transfer failed: ${transferResult.message}`)
+      return
+    }
+
+    const status = transferResult.otpRequired ? 'PENDING' : 'SUCCESSFUL'
+
+    const { error: txError } = await supabase.from('transactions').insert({
+      user_id: link.user_id,
+      reference: ref,
+      amount: intent.amount,
+      type: 'debit',
+      recipient: recipientName,
+      recipient_account: account,
+      status,
+      provider: 'paystack',
+    })
+
+    if (txError) {
+      await bot.sendMessage(chatId, 'Sorry, something went wrong recording your payment.')
+      return
+    }
+
+    if (status === 'PENDING') {
+      await bot.sendMessage(
+        chatId,
+        `\u23F3 *Transfer pending OTP!*\n\nAmount: \u20A6${intent.amount.toLocaleString()}\nRecipient: ${recipientName}\nRef: \`${ref}\`\n\nCheck your Paystack dashboard email for the OTP to complete this transfer.`,
+        { parse_mode: 'Markdown' }
+      )
+      return
+    }
+
+    await bot.sendMessage(
+      chatId,
+      `\u2705 *Transfer Successful!*\n\nAmount: \u20A6${intent.amount.toLocaleString()}\nRecipient: ${recipientName}\nRef: \`${ref}\``,
+      { parse_mode: 'Markdown' }
+    )
   })
 }

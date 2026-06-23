@@ -11,7 +11,6 @@ export const config = {
   supabaseServiceKey: process.env.SUPABASE_SERVICE_KEY,
   telegramBotToken: process.env.TELEGRAM_BOT_TOKEN,
   telegramEnabled: process.env.TELEGRAM_ENABLED === 'true',
-  opayBaseUrl: process.env.OPAY_BASE_URL || 'https://sandboxapi.opaycheckout.com',
-  opayMerchantId: process.env.OPAY_MERCHANT_ID || '256621051120756',
+  paystackSecretKey: process.env.PAYSTACK_SECRET_KEY,
   port: parseInt(process.env.PORT || '3001', 10),
 }
