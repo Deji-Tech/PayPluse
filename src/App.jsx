@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import { ToastProvider } from './components/ui/toast'
 import { ThemeProvider } from './contexts/ThemeContext'
 import { AuthProvider } from './contexts/AuthContext'
@@ -17,6 +17,7 @@ export default function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/about" element={<About />} />
             <Route path="/dashboard" element={<DashboardLayout />} />
+            <Route path="/deposit" element={<Navigate to="/dashboard" replace />} />
           </Routes>
         </AuthProvider>
       </ToastProvider>
