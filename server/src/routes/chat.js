@@ -17,11 +17,11 @@ router.post('/parse', async (req, res) => {
   if (intent.action === 'balance') {
     const { data: txs } = await supabase
       .from('transactions')
-      .select('amount, type')
+      .select('amount')
       .eq('user_id', req.user.id)
       .in('status', ['SUCCESSFUL'])
 
-    const balance = (txs || []).reduce((s, t) => t.type === 'credit' ? s + Number(t.amount) : s - Number(t.amount), 0)
+    const balance = (txs || []).reduce((s, t) => s + Number(t.amount), 0)
     return res.json({ action: 'balance', balance })
   }
 
@@ -51,9 +51,8 @@ router.post('/parse', async (req, res) => {
 
   const { error: txError, data: tx } = await supabase.from('transactions').insert({
     user_id: req.user.id,
-    reference: ref,
-    amount: intent.amount,
-    type: 'debit',
+    amount: -intent.amount,
+    recipient_account: account,
     status: 'PENDING',
   }).select().single()
 

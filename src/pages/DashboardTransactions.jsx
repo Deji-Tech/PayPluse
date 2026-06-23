@@ -95,12 +95,12 @@ export default function DashboardTransactions() {
                 {txs.map((tx, i) => (
                   <tr key={tx.id || i} className="border-b border-border/50 hover:bg-accent/5 transition-colors">
                     <td className="px-5 py-4">
-                      <code className="text-xs font-mono text-accent">{tx.reference}</code>
+                      <code className="text-xs font-mono text-accent">{tx.id?.slice(0, 8) || ''}</code>
                     </td>
-                    <td className={`px-5 py-4 font-medium text-text-primary ${tx.type === 'credit' ? 'text-success' : ''}`}>
-                      {tx.type === 'credit' ? '+' : '-'}\u20A6{Number(tx.amount).toLocaleString()}
+                    <td className={`px-5 py-4 font-medium ${Number(tx.amount) > 0 ? 'text-success' : 'text-text-primary'}`}>
+                      {Number(tx.amount) > 0 ? '+' : '-'}\u20A6{Math.abs(Number(tx.amount)).toLocaleString()}
                     </td>
-                    <td className="px-5 py-4 text-muted">{tx.recipient}</td>
+                    <td className="px-5 py-4 text-muted">{tx.recipient_account || '-'}</td>
                     <td className="px-5 py-4">
                       <Badge variant={statusConfig[tx.status]?.variant || 'warning'} size="md" dot>
                         {tx.status}

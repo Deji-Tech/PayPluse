@@ -92,9 +92,9 @@ export default function DashboardChat() {
               <p className="text-text-primary font-semibold mb-2">Recent Transactions</p>
               {txs.slice(0, 5).map(tx => (
                 <div key={tx.id} className="flex justify-between py-1.5 border-b border-border/50 text-sm">
-                  <span className="text-muted truncate mr-2">{tx.recipient}</span>
-                  <span className={`font-medium flex-shrink-0 ${tx.type === 'credit' ? 'text-success' : ''}`}>
-                    {tx.type === 'credit' ? '+' : '-'}\u20A6{Number(tx.amount).toLocaleString()}
+                  <span className="text-muted truncate mr-2">{tx.recipient_account || '-'}</span>
+                  <span className={`font-medium flex-shrink-0 ${Number(tx.amount) > 0 ? 'text-success' : ''}`}>
+                    {Number(tx.amount) > 0 ? '+' : '-'}\u20A6{Math.abs(Number(tx.amount)).toLocaleString()}
                   </span>
                 </div>
               ))}

@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import { paystack } from '../services/paystack.js'
 import { supabase } from '../lib/supabase.js'
+import { config } from '../config.js'
 
 const router = Router()
 
@@ -24,9 +25,8 @@ router.post('/init', async (req, res) => {
 
     const { error: insertError } = await supabase.from('transactions').insert({
       user_id: req.user.id,
-      reference: ref,
       amount,
-      type: 'credit',
+      recipient_account: email,
       status: 'PENDING',
     })
     if (insertError) return res.status(500).json({ error: 'DB error: ' + insertError.message })

@@ -120,7 +120,7 @@ export default function DashboardHome({ onNavigate }) {
                 No transactions yet. Start by sending a payment in Chat.
               </div>
             ) : txs.map((tx, i) => {
-              const isCredit = tx.type === 'credit'
+              const isCredit = Number(tx.amount) > 0
               return (
                 <div key={i} className="flex items-center justify-between px-5 sm:px-6 py-3.5 hover:bg-accent/5 transition-colors">
                   <div className="flex items-center gap-3 min-w-0">
@@ -130,13 +130,12 @@ export default function DashboardHome({ onNavigate }) {
                       <ArrowUpRight size={14} className={`${isCredit ? 'text-success' : 'text-error'} ${!isCredit ? 'rotate-90' : ''}`} />
                     </div>
                     <div className="min-w-0">
-                      <div className="text-sm font-medium text-text-primary truncate">{tx.recipient}</div>
-                      <code className="text-[10px] font-mono text-muted">{tx.reference}</code>
+                      <div className="text-sm font-medium text-text-primary truncate">{tx.recipient_account || 'Deposit'}</div>
                     </div>
                   </div>
                   <div className="flex items-center gap-3 flex-shrink-0 ml-3">
                     <span className={`text-sm font-medium ${isCredit ? 'text-success' : 'text-text-primary'}`}>
-                      {isCredit ? '+' : '-'}\u20A6{Number(tx.amount).toLocaleString()}
+                      {isCredit ? '+' : '-'}\u20A6{Math.abs(Number(tx.amount)).toLocaleString()}
                     </span>
                     <Badge variant={statusConfig[tx.status]?.variant || 'warning'} size="sm" dot>
                       {tx.status}

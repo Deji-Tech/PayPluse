@@ -277,9 +277,8 @@ export function startTelegramBot() {
 
     const { error: txError } = await supabase.from('transactions').insert({
       user_id: link.user_id,
-      reference: ref,
-      amount: intent.amount,
-      type: 'debit',
+      amount: -intent.amount,
+      recipient_account: account,
       status,
     })
 

@@ -26,12 +26,12 @@ router.get('/', async (req, res) => {
 router.get('/stats', async (req, res) => {
   const { data: txs } = await supabase
     .from('transactions')
-    .select('amount, type, status, created_at')
+    .select('amount, status, created_at')
     .eq('user_id', req.user.id)
     .in('status', ['SUCCESSFUL', 'PENDING'])
 
   const totalBalance = (txs || []).reduce((s, t) =>
-    t.type === 'credit' ? s + Number(t.amount) : s - Number(t.amount), 0
+    s + Number(t.amount), 0
   )
 
   const today = new Date().toISOString().slice(0, 10)
