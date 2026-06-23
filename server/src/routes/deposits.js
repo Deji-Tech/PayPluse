@@ -46,7 +46,7 @@ router.post('/verify', async (req, res) => {
   const { data: tx } = await supabase
     .from('transactions')
     .select('*')
-    .eq('reference', reference)
+    .eq('reference_code', reference)
     .eq('user_id', req.user.id)
     .single()
 

@@ -83,19 +83,19 @@ router.post('/confirm', async (req, res) => {
   const { data: tx } = await supabase
     .from('transactions')
     .select('*')
-    .eq('reference', reference)
+    .eq('reference_code', reference)
     .eq('user_id', req.user.id)
     .single()
 
   if (!tx) return res.status(404).json({ error: 'Transaction not found' })
   if (tx.status !== 'PENDING') return res.status(400).json({ error: 'Transaction already processed' })
 
-  const recipientResult = await paystack.createRecipient(tx.recipient, tx.recipient_account)
+  const recipientResult = await paystack.createRecipient(tx.recipient_account, tx.recipient_account)
   if (!recipientResult.success) {
     return res.status(500).json({ error: 'Failed to create payment recipient' })
   }
 
-  const transferResult = await paystack.initiateTransfer(tx.amount, recipientResult.recipientCode, reference)
+  const transferResult = await paystack.initiateTransfer(Math.abs(Number(tx.amount)), recipientResult.recipientCode, reference)
   if (!transferResult.success) {
     await supabase.from('transactions').update({ status: 'FAILED', updated_at: new Date().toISOString() }).eq('id', tx.id)
     return res.status(500).json({ error: transferResult.message || 'Transfer failed' })
