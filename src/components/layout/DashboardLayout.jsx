@@ -75,6 +75,10 @@ export default function DashboardLayout() {
     }
   }, [searchParams])
 
+  const toggleSidebar = useCallback(() => {
+    setSidebarCollapsed(prev => !prev)
+  }, [])
+
   // Auto-collapse sidebar on medium screens (768–1024px)
   useEffect(() => {
     const check = () => {
@@ -136,10 +140,6 @@ export default function DashboardLayout() {
     )
   }
   if (!user) return null
-
-  const toggleSidebar = useCallback(() => {
-    setSidebarCollapsed(prev => !prev)
-  }, [])
 
   const handleNavigate = (page) => {
     setActivePage(page)
