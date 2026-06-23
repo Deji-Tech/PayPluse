@@ -27,8 +27,6 @@ router.post('/init', async (req, res) => {
       reference: ref,
       amount,
       type: 'credit',
-      recipient: 'Deposit',
-      recipient_account: email,
       status: 'PENDING',
     })
     if (insertError) return res.status(500).json({ error: 'DB error: ' + insertError.message })

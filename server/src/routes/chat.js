@@ -54,8 +54,6 @@ router.post('/parse', async (req, res) => {
     reference: ref,
     amount: intent.amount,
     type: 'debit',
-    recipient: intent.recipientName || accountInfo?.accountName || account,
-    recipient_account: account,
     status: 'PENDING',
   }).select().single()
 

@@ -280,8 +280,6 @@ export function startTelegramBot() {
       reference: ref,
       amount: intent.amount,
       type: 'debit',
-      recipient: recipientName,
-      recipient_account: account,
       status,
     })
 
