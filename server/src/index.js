@@ -43,6 +43,33 @@ app.use('/api/profile', requireAuth, profileRoutes)
 app.use('/api/telegram', requireAuth, telegramRoutes)
 app.use('/api/deposits', requireAuth, depositRoutes)
 
+app.get('/api/debug/paystack-test', async (req, res) => {
+  try {
+    const r = await fetch('https://api.paystack.co/transaction/initialize', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${config.paystackSecretKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email: 'test@test.com', amount: 10000, reference: 'DEBUG-' + Date.now() }),
+    })
+    const data = await r.json()
+    res.json(data)
+  } catch (err) {
+    res.status(500).json({ error: err.message })
+  }
+})
+
+app.get('/api/debug', requireAuth, (req, res) => {
+  res.json({
+    hasPaystackKey: !!config.paystackSecretKey,
+    paystackKeyPrefix: config.paystackSecretKey ? config.paystackSecretKey.slice(0, 10) + '...' : null,
+    hasSupabaseUrl: !!config.supabaseUrl,
+    hasSupabaseKey: !!config.supabaseServiceKey,
+    port: config.port,
+  })
+})
+
 app.use((err, req, res, next) => {
   console.error('[Error]', err.stack || err)
   const status = err.status || err.statusCode || 500
