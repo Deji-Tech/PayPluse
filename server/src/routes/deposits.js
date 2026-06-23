@@ -37,6 +37,12 @@ router.post('/init', async (req, res) => {
       global: { headers: { Authorization: `Bearer ${token}` } },
     })
 
+    await supabase.from('users').upsert({
+      id: req.user.id,
+      email: req.user.email,
+      full_name: req.user.user_metadata?.full_name || req.user.email?.split('@')[0] || 'User',
+    }, { onConflict: 'id' })
+
     const { error: insertError } = await anon.from('transactions').insert({
       user_id: req.user.id,
       amount,

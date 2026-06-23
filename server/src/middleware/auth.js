@@ -14,5 +14,12 @@ export async function requireAuth(req, res, next) {
   }
 
   req.user = user
+
+  supabase.from('users').upsert({
+    id: user.id,
+    email: user.email,
+    full_name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'User',
+  }, { onConflict: 'id' }).then().catch(() => {})
+
   next()
 }
